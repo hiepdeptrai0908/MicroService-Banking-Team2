@@ -1,4 +1,4 @@
-# <div style="color: Green">ĐỀ BÀI:</div> Xây dựng ứng dụng Ngân hàng dựa trên kiến trúc microservice
+# <div style="color: green">ĐỀ BÀI:</div> Xây dựng ứng dụng Ngân hàng dựa trên kiến trúc microservice
 
 ## Kiến trúc có các service chính sau:
 
@@ -24,7 +24,7 @@
 -   Dịch vụ giao dịch cung cấp một loạt các dịch vụ liên quan đến giao dịch.
     -   Người dùng có thể xem giao dịch dựa trên các tài khoản cụ thể hoặc ID tham chiếu giao dịch, cũng như thực hiện nạp tiền hoặc rút tiền từ tài khoản của họ.
 
-## <div style="color: Green">GITHUB DỰ ÁN CỦA TEAM 2</div>
+## <div style="color: green">GITHUB DỰ ÁN CỦA TEAM 2</div>
 
 Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiepdeptrai0908/MicroService-Banking-Team2)
 
