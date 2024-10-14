@@ -29,12 +29,12 @@
 Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiepdeptrai0908/MicroService-Banking-Team2)
 
 ### Bước 1: Clone dự án về máy
-- **Ở tại folder muốn tải dự án về > mở Terminal > gõ dòng lệnh:**
+- **Ở tại folder muốn tải dự án về > mở Terminal > gõ dòng lệnh:**<br>
   `git clone git@github.com:hiepdeptrai0908/MicroService-Banking-Team2.git`
 
 ### Bước 2: Check out vào nhánh của bạn
-- **Đi vào thư mục vừa mới clone về:**
+- **Đi vào thư mục vừa mới clone về:**<br>
   `cd MicroService-Banking-Team2`
 
-- **Tại thư mục dự án check out vào nhánh của bạn:**
+- **Tại thư mục dự án check out vào nhánh của bạn:**<br>
   `Mình sẽ cập nhật nhánh của từng service sau khi đã setup xong nhé ...`
