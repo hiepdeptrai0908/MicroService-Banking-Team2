@@ -7,9 +7,9 @@ spring:
     not_found: 404
 
   datasource:
-    url: jdbc:mysql://localhost:3306/account_service
-    username: root
-    password: root
+    url: jdbc:mysql://54.224.1.57:3306/banking_team2
+    username: team2user
+    password: team2password
 
   jpa:
     hibernate:
