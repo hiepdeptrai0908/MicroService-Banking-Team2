@@ -33,7 +33,7 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
   `git clone git@github.com:hiepdeptrai0908/MicroService-Banking-Team2.git`
 
 ### Bước 2: Check out vào nhánh của bạn
-1. **Đi vào thư mục vừa mới clone về:**<br>
+1. **Đi vào thư mục vừa mới clone về:**
 - VD: `cd MicroService-Banking-Team2`
 <br>
 2. **Tại thư mục dự án check out vào nhánh của bạn:**
