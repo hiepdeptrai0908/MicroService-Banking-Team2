@@ -33,8 +33,17 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
   `git clone git@github.com:hiepdeptrai0908/MicroService-Banking-Team2.git`
 
 ### Bước 2: Check out vào nhánh của bạn
-- **Đi vào thư mục vừa mới clone về:**<br>
-  `cd MicroService-Banking-Team2`
-
-- **Tại thư mục dự án check out vào nhánh của bạn:**<br>
-  `Mình sẽ cập nhật nhánh của từng service sau khi đã setup xong nhé ...`
+1. **Đi vào thư mục vừa mới clone về:**<br>
+- VD: `cd MicroService-Banking-Team2`
+<br>
+2. **Tại thư mục dự án check out vào nhánh của bạn:**
+- Để tránh bị xung đột code thì hãy pull code từ nhánh "main" về để cập nhật code mới nhất của dự án:<br>
+    `git checkout main`<br>
+    `git pull`
+  <br>
+- Sau khi đã pull code về thì checkout sang nhánh khác hoặc tạo nhánh mới để tiến hành code:<br>
+*VD checkout sang nhánh đã có:*<br>
+`git checkout dev/tên_nhánh`<br>
+*VD tạo nhánh mới:*<br>
+`git checkout -b dev/tên_nhánh_mới`<br>
+> **Lưu ý:** Mỗi khi bạn chỉnh sửa gì thì hãy checkout sang nhánh khác và đặt tên nhánh đúng với chức năng bạn sẽ làm, ví dụ: `git checkout -b dev/JWT_service`. Tuyệt đối không sửa trực tiếp vào nhánh chính là "main"
