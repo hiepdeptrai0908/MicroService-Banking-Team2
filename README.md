@@ -48,3 +48,31 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
       `git checkout -b dev/tên_nhánh_mới`
 
 > **Lưu ý:** Mỗi khi bạn chỉnh sửa gì thì hãy checkout sang nhánh khác và đặt tên nhánh đúng với chức năng bạn sẽ làm, ví dụ: `git checkout -b dev/JWT_service`. Tuyệt đối không sửa trực tiếp vào nhánh chính là "main".
+
+## NHIỆM VỤ:
+
+### **Thành viên 1 (User Service)**: 
+- Chịu trách nhiệm phát triển các API liên quan đến đăng ký, đăng nhập người dùng, và xác thực JWT.
+- code tại nhánh: `git checkout user-service`
+- cổng `server.port=8081`
+
+### **Thành viên 2 (Account Service)**: 
+- Xây dựng các API quản lý tài khoản, bao gồm xem và chỉnh sửa thông tin tài khoản.
+- code tại nhánh: `git checkout account-service`
+- cổng `server.port=8082`
+
+### **Thành viên 3 (Fund Transfer Service)**: 
+- Phát triển các API cho chức năng chuyển tiền.
+- code tại nhánh: `git checkout fund-transfer-service`
+- cổng `server.port=8083`
+
+### **Thành viên 4 (Transactions Service)**: 
+- Xây dựng các API liên quan đến quản lý giao dịch, bao gồm xem lịch sử giao dịch, nạp/rút tiền.
+- code tại nhánh: `git checkout transactions-service`
+- cổng `server.port=8084`
+
+### **Thành viên 5 (Cấu hình và triển khai cơ sở hạ tầng)**: 
+- Cấu hình và triển khai Eureka Server và API Gateway.
+- Review code. Đồng thời tích hợp các Service vào Eureka và bảo mật API Gateway với JWT.
+- cổng Eureka Server `server.port=8761`
+- cổng API Gateway `server.port=8080`
