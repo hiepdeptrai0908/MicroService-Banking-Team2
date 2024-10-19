@@ -32,8 +32,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc mật khẩu không đúng");
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<User> findAllUser() {
         return userService.findAllUser();
+    }
+
+    @GetMapping("/{userId}")
+    public User findUserById(@PathVariable Long userId) {
+        return userService.findUserById(userId);
     }
 }

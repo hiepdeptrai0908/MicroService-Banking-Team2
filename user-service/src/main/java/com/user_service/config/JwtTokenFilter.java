@@ -33,8 +33,7 @@ import java.util.ArrayList;
                     .getSubject();
 
             if (username != null) {
-                // Tạo đối tượng xác thực
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null, null);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         } catch (Exception e) {

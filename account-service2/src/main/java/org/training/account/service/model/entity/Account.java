@@ -1,0 +1,46 @@
+package org.training.account.service.model.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.training.account.service.model.AccountStatus;
+import org.training.account.service.model.AccountType;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class Account {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long accountId;
+
+    @Column(nullable = false, unique = true)
+    private String accountNumber;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
+    @Column(nullable = false)
+    @CreationTimestamp
+    private LocalDate openingDate;
+
+    @Column(nullable = false)
+    private BigDecimal availableBalance;
+
+    @Column(nullable = false)
+    private Long userId;
+}

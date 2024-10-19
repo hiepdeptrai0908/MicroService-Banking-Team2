@@ -5,6 +5,7 @@ import com.user_service.dto.MessageResponse;
 import com.user_service.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IUserService {
     MessageResponse registerUser(User user);
@@ -13,4 +14,6 @@ public interface IUserService {
     JwtResponse loginUser(String username, String password);
 
     List<User> findAllUser();
+
+    User findUserById(Long id);
 }
