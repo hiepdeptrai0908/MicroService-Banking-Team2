@@ -68,7 +68,7 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
 
 ### **Thành viên 4 (Transactions Service)**: 
 - Xây dựng các API liên quan đến quản lý giao dịch, bao gồm xem lịch sử giao dịch, nạp/rút tiền.
-- code tại nhánh: `git checkout transactions-service`
+- code tại nhánh: `git checkout transaction-service`
 - cổng `server.port=8084`
 
 ### **Thành viên 5 (Cấu hình và triển khai cơ sở hạ tầng)**: 
