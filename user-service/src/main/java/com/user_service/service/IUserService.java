@@ -5,7 +5,6 @@ import com.user_service.dto.MessageResponse;
 import com.user_service.entity.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IUserService {
     MessageResponse registerUser(User user);
@@ -15,5 +14,5 @@ public interface IUserService {
 
     List<User> findAllUser();
 
-    User findUserById(Long id);
+    User findById(Long id);
 }

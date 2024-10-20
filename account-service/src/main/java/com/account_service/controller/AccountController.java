@@ -5,6 +5,7 @@ import com.account_service.model.dto.AccountStatusUpdate;
 import com.account_service.model.dto.external.TransactionResponse;
 import com.account_service.model.dto.response.Response;
 import com.account_service.service.AccountService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Response> createAccount(@RequestBody AccountDto accountDto) {
-        return new ResponseEntity<>(accountService.createAccount(accountDto), HttpStatus.CREATED);
+    public ResponseEntity<Response> createAccount(@RequestBody AccountDto accountDto, HttpServletRequest request) {
+        return new ResponseEntity<>(accountService.createAccount(accountDto, request), HttpStatus.CREATED);
     }
 
     @PatchMapping
