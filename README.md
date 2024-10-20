@@ -53,26 +53,32 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
 
 ### **Thành viên 1 (User Service)**: 
 - Chịu trách nhiệm phát triển các API liên quan đến đăng ký, đăng nhập người dùng, và xác thực JWT.
-- code tại nhánh: `git checkout user-service`
-- cổng `server.port=8081`
+- Code tại nhánh: `git checkout user-service`
+- Cổng `server.port=8081`
 
 ### **Thành viên 2 (Account Service)**: 
 - Xây dựng các API quản lý tài khoản, bao gồm xem và chỉnh sửa thông tin tài khoản.
-- code tại nhánh: `git checkout account-service`
-- cổng `server.port=8082`
+- Code tại nhánh: `git checkout account-service`
+- Cổng `server.port=8082`
 
 ### **Thành viên 3 (Fund Transfer Service)**: 
 - Phát triển các API cho chức năng chuyển tiền.
-- code tại nhánh: `git checkout fund-transfer-service`
-- cổng `server.port=8083`
+- Code tại nhánh: `git checkout fund-transfer-service`
+- Cổng `server.port=8083`
 
 ### **Thành viên 4 (Transactions Service)**: 
 - Xây dựng các API liên quan đến quản lý giao dịch, bao gồm xem lịch sử giao dịch, nạp/rút tiền.
-- code tại nhánh: `git checkout transaction-service`
-- cổng `server.port=8084`
+- Code tại nhánh: `git checkout transaction-service`
+- Cổng `server.port=8084`
 
 ### **Thành viên 5 (Cấu hình và triển khai cơ sở hạ tầng)**: 
 - Cấu hình và triển khai Eureka Server và API Gateway.
 - Review code. Đồng thời tích hợp các Service vào Eureka và bảo mật API Gateway với JWT.
-- cổng Eureka Server `server.port=8761`
-- cổng API Gateway `server.port=8080`
+- Cổng Eureka Server `server.port=8761`
+- Cổng API Gateway `server.port=8080`
+
+### **Service phụ của Account Service (Sequence Generator)**:
+- Service phụ có nhiệm vụ: Tự động tạo ra **số tài khoản** khi tạo Account mới.
+- **Account Service** sẽ gọi api chéo sang **Sequence Generator** Service để tạo account
+- Code tại nhánh: `git checkout sequence-generator`
+- Cổng API Gateway `server.port=8085`
