@@ -2,6 +2,9 @@ package com.user_service.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Data
 @Entity
@@ -19,5 +22,9 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private Timestamp createdAt;
 }
 
