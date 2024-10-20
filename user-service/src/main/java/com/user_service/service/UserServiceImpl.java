@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -57,6 +58,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<User> findAllUser() {
         return userRepository.findAll();
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
 }
 

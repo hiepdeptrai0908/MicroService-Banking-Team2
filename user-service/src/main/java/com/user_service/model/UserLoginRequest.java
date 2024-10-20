@@ -1,4 +1,4 @@
-package com.user_service.modal;
+package com.user_service.model;
 
 import lombok.Data;
 
