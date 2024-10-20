@@ -15,9 +15,13 @@ import com.account_service.model.entity.Account;
 import com.account_service.model.mapper.AccountMapper;
 import com.account_service.repository.AccountRepository;
 import com.account_service.service.AccountService;
+import com.account_service.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -42,17 +46,33 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountMapper accountMapper = new AccountMapper();
 
+    private final JwtUtil jwtUtil = new JwtUtil();
 
     @Value("${spring.application.ok}")
     private String success;
 
     @Override
-    public Response createAccount(AccountDto accountDto) {
+    public Response createAccount(AccountDto accountDto, HttpServletRequest request) {
 
-        ResponseEntity<UserDto> user = userService.readUserById(accountDto.getUserId());
+        Long userId = jwtUtil.extractClaimsFromJwt(request);
+
+        accountDto.setUserId(userId);
+
+        ResponseEntity<UserDto> user;
+        try {
+            // FeignClient call to get user by ID
+            user = userService.readUserById(userId);
+        } catch (FeignException.NotFound e) {
+            // Handle 404 - Not Found from the user service
+            throw new ResourceNotFound("User not found on the server");
+        } catch (FeignException e) {
+            // Handle other FeignClient-related exceptions
+            log.error("Error during FeignClient call: " + e.getMessage(), e);
+            throw new ServiceException("An error occurred while communicating with the user service");
+        }
 
         if (Objects.isNull(user.getBody())) {
-            throw new ResourceNotFound("user not found on the server");
+            throw new ResourceNotFound("User not found on the server");
         }
 
         accountRepository.findAccountByUserIdAndAccountType(accountDto.getUserId(), AccountType.valueOf(accountDto.getAccountType()))

@@ -46,6 +46,7 @@ public class UserServiceImpl implements IUserService {
             // Tạo JWT token
             String token = Jwts.builder()
                     .setSubject(user.getUsername())
+                    .claim("userId", user.getId())
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // 2 phút
                     .signWith(SignatureAlgorithm.HS512, "team2-secretKey")
@@ -60,7 +61,7 @@ public class UserServiceImpl implements IUserService {
         return userRepository.findAll();
     }
 
-    public User findUserById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 }

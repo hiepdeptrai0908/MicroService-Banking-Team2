@@ -5,6 +5,7 @@ import com.account_service.model.dto.AccountDto;
 import com.account_service.model.dto.AccountStatusUpdate;
 import com.account_service.model.dto.external.TransactionResponse;
 import com.account_service.model.dto.response.Response;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface AccountService {
      * @param accountDto the account information to be created
      * @return the response containing the created account
      */
-    Response createAccount(AccountDto accountDto);
+    Response createAccount(AccountDto accountDto, HttpServletRequest request);
 
     /**
      * Updates the status of an account.
