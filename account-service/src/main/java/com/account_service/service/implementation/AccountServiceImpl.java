@@ -15,6 +15,7 @@ import com.account_service.model.entity.Account;
 import com.account_service.model.mapper.AccountMapper;
 import com.account_service.repository.AccountRepository;
 import com.account_service.service.AccountService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -49,6 +50,7 @@ public class AccountServiceImpl implements AccountService {
     public Response createAccount(AccountDto accountDto) {
 
         ResponseEntity<UserDto> user = userService.readUserById(accountDto.getUserId());
+
         if (Objects.isNull(user.getBody())) {
             throw new ResourceNotFound("user not found on the server");
         }

@@ -8,8 +8,8 @@
 		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.sequence_generator</groupId>
-	<artifactId>sequence_generator</artifactId>
+	<groupId>com.sequence-generator</groupId>
+	<artifactId>sequence-generator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sequence_generator</name>
 	<description>Sequence Generator</description>
