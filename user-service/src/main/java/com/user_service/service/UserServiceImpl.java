@@ -48,7 +48,7 @@ public class UserServiceImpl implements IUserService {
                     .setSubject(user.getUsername())
                     .claim("userId", user.getId())
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // 2 phút
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5)) // 2 phút
                     .signWith(SignatureAlgorithm.HS512, "team2-secretKey")
                     .compact();
             return new JwtResponse(token);
