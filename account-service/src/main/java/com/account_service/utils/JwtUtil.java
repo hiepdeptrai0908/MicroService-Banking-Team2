@@ -1,6 +1,7 @@
 package com.account_service.utils;
 
 import com.account_service.exception.UnauthorizedException;
+import com.account_service.model.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,9 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Map;
 
-public class JwtUtil {
-
-    private final String secretKey = "team2-secretKey"; // You can externalize this key to a config file
+public class JwtUtil {// You can externalize this key to a config file
 
     public Long extractClaimsFromJwt(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
@@ -21,11 +20,10 @@ public class JwtUtil {
         String token = header.replace("Bearer ", "");
 
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(Constants.SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
 
         return claims.get("userId", Long.class);
     }
-
 }

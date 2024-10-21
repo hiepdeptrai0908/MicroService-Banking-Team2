@@ -1,5 +1,6 @@
 package com.user_service.config;
 
+import com.user_service.utils.Constants;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
@@ -12,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
 
@@ -31,7 +31,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             // Phân tích token và lấy thông tin người dùng
             String username = Jwts.parser()
-                    .setSigningKey("team2-secretKey") // Khoá bí mật
+                    .setSigningKey(Constants.SECRET_KEY) // Khoá bí mật
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
