@@ -4,17 +4,19 @@ import com.user_service.dto.JwtResponse;
 import com.user_service.dto.MessageResponse;
 import com.user_service.entity.User;
 import com.user_service.repository.UserRepository;
+import com.user_service.utils.Constants;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements IUserService {
     @Autowired
     private UserRepository userRepository;
@@ -49,7 +51,7 @@ public class UserServiceImpl implements IUserService {
                     .claim("userId", user.getId())
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2)) // 2 phút
-                    .signWith(SignatureAlgorithm.HS512, "team2-secretKey")
+                    .signWith(SignatureAlgorithm.HS512, Constants.SECRET_KEY)
                     .compact();
             return new JwtResponse(token);
         }

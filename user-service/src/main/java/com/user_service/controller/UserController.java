@@ -4,6 +4,7 @@ import com.user_service.entity.User;
 import com.user_service.model.UserLoginRequest;
 import com.user_service.dto.JwtResponse;
 import com.user_service.service.IUserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:8082")
 @RestController
 @RequestMapping("/api/users")
+@AllArgsConstructor
 public class UserController {
     @Autowired
     private IUserService userService;
@@ -33,7 +35,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username hoặc mật khẩu không đúng");
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<User> findAllUser() {
         return userService.findAllUser();
     }
