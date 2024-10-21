@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "user-service", configuration = FeignConfiguration.class)
 public interface UserService {
 
+    /**
+     * Read user by id response entity.
+     *
+     * @param userId the user id
+     * @return the response entity
+     */
     @GetMapping("/api/users/{userId}")
     ResponseEntity<UserDto> readUserById(@PathVariable Long userId);
 }
