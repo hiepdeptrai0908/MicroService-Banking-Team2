@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/transactions")
+@CrossOrigin
 public class TransactionController {
 
     private final TransactionService transactionService;
