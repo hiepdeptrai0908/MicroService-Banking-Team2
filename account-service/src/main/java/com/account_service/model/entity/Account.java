@@ -1,10 +1,7 @@
 package com.account_service.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import com.account_service.model.AccountStatus;
 import com.account_service.model.AccountType;
@@ -17,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 public class Account {
 
     @Id

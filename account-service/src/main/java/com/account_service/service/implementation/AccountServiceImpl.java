@@ -16,7 +16,6 @@ import com.account_service.model.mapper.AccountMapper;
 import com.account_service.repository.AccountRepository;
 import com.account_service.service.AccountService;
 import com.account_service.utils.JwtUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.account_service.model.Constants.ACC_PREFIX;
 
@@ -166,17 +166,21 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto readAccountByUserId(Long userId) {
+    public List<AccountDto> readAccountsByUserId(Long userId) {
 
-        return accountRepository.findAccountByUserId(userId)
-                .map(account ->{
-                    if(!account.getAccountStatus().equals(AccountStatus.ACTIVE)){
-                        throw new AccountStatusException("Account is inactive/closed");
-                    }
+        List<Account> accounts = accountRepository.findAccountsByUserId(userId);
+
+        if (accounts.isEmpty()) {
+            throw new ResourceNotFound("No accounts found for userId: " + userId);
+        }
+
+        return accounts.stream()
+                .map(account -> {
                     AccountDto accountDto = accountMapper.convertToDto(account);
                     accountDto.setAccountStatus(account.getAccountStatus().toString());
                     accountDto.setAccountType(account.getAccountType().toString());
                     return accountDto;
-                }).orElseThrow(ResourceNotFound::new);
+                })
+                .collect(Collectors.toList());
     }
 }

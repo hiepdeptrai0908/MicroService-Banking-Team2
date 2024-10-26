@@ -58,7 +58,7 @@ public class FundTransferServiceImpl implements FundTransferService {
 
         ResponseEntity<Account> response = accountService.readByAccountNumber(fundTransferRequest.getFromAccount());
         if(Objects.isNull(response.getBody())){
-            log.error("Tài khoản yêu cầu "+fundTransferRequest.getFromAccount()+" không được tìm thấy trên máy chủ");
+            log.error("Tài khoản yêu cầu "+ fundTransferRequest.getFromAccount()+" không được tìm thấy trên máy chủ");
             throw new ResourceNotFound("Tài khoản yêu cầu không được tìm thấy trên máy chủ", GlobalErrorCode.NOT_FOUND);
         }
         fromAccount = response.getBody();
