@@ -21,10 +21,10 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     /**
-     * Add transactions to the system.
+     * Thêm giao dịch vào hệ thống.
      *
-     * @param transactionDto The transaction data to be added.
-     * @return The response entity with the added transaction data.
+     * @param transactionDto Dữ liệu giao dịch cần thêm.
+     * @return Đối tượng phản hồi chứa dữ liệu giao dịch đã thêm.
      */
     @PostMapping
     public ResponseEntity<Response> addTransactions(@RequestBody TransactionDto transactionDto) {
@@ -32,23 +32,25 @@ public class TransactionController {
     }
 
     /**
-     * Handles the endpoint for making internal transactions.
-     * (Another service is calling this service to make transactions (fund-transfer-service))
+     * Xử lý endpoint cho việc thực hiện giao dịch nội bộ.
+     * (Một dịch vụ khác đang gọi dịch vụ này để thực hiện giao dịch (fund-transfer-service))
      *
-     * @param transactionDtos       The list of transaction DTOs.
-     * @param transactionReference  The transaction reference.
-     * @return                      The response entity containing the response.
+     * @param transactionDtos       Danh sách DTO giao dịch.
+     * @param transactionReference  Mã tham chiếu giao dịch.
+     * @return                      Đối tượng phản hồi chứa phản hồi.
      */
     @PostMapping("/internal")
-    public ResponseEntity<Response> makeInternalTransaction(@RequestBody List<TransactionDto> transactionDtos,@RequestParam String transactionReference) {
+    public ResponseEntity<Response> makeInternalTransaction(@RequestBody List<TransactionDto> transactionDtos, @RequestParam String transactionReference) {
+        System.out.println("TransactionDto: " + transactionDtos);
+        System.out.println("transactionReference: " + transactionReference);
         return new ResponseEntity<>(transactionService.internalTransaction(transactionDtos, transactionReference), HttpStatus.CREATED);
     }
 
     /**
-     * Retrieves a list of transactions for a given account ID.
+     * Lấy danh sách giao dịch cho một ID tài khoản nhất định.
      *
-     * @param accountId The ID of the account
-     * @return The list of transactions
+     * @param accountId ID của tài khoản.
+     * @return Danh sách các giao dịch.
      */
     @GetMapping
     public ResponseEntity<List<TransactionRequest>> getTransactions(@RequestParam String accountId) {
@@ -56,13 +58,14 @@ public class TransactionController {
     }
 
     /**
-     * Retrieves a list of transaction requests based on the provided transaction reference ID.
+     * Lấy danh sách yêu cầu giao dịch dựa trên ID tham chiếu giao dịch đã cung cấp.
      *
-     * @param referenceId The transaction reference ID
-     * @return A ResponseEntity object containing the list of transaction requests
+     * @param referenceId ID tham chiếu giao dịch.
+     * @return Một đối tượng ResponseEntity chứa danh sách các yêu cầu giao dịch.
      */
     @GetMapping("/{referenceId}")
     public ResponseEntity<List<TransactionRequest>> getTransactionByTransactionReference(@PathVariable String referenceId) {
         return new ResponseEntity<>(transactionService.getTransactionByTransactionReference(referenceId), HttpStatus.OK);
     }
+
 }

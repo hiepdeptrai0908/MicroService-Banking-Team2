@@ -14,21 +14,21 @@ import com.fund_transfer.model.dto.response.Response;
 public interface AccountService {
 
     /**
-     * Lấy thông tin tài khoản theo số tài khoản.
+     * Retrieves an account by account number.
      *
-     * @param accountNumber Số tài khoản cần tìm.
-     * @return Tài khoản tương ứng với số tài khoản.
+     * @param accountNumber The account number.
+     * @return The account matching the account number.
      */
-    @GetMapping("/accounts")
+    @GetMapping("/api/accounts")
     ResponseEntity<Account> readByAccountNumber(@RequestParam String accountNumber);
 
     /**
-     * Cập nhật thông tin tài khoản với số tài khoản đã cho.
+     * Update an account with the given account number.
      *
-     * @param accountNumber Số tài khoản của tài khoản cần cập nhật.
-     * @param account Thông tin tài khoản đã cập nhật.
-     * @return Đối tượng phản hồi chứa thông tin phản hồi.
+     * @param accountNumber The account number of the account to be updated.
+     * @param account The updated account information.
+     * @return The response entity containing the response.
      */
-    @PutMapping("/accounts")
+    @PutMapping("/api/accounts")
     ResponseEntity<Response> updateAccount(@RequestParam String accountNumber, @RequestBody Account account);
 }
