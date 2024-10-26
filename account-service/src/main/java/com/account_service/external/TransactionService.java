@@ -17,6 +17,6 @@ public interface TransactionService {
      * @param accountId the ID of the account
      * @return a list of transaction responses
      */
-    @GetMapping("/transactions")
+    @GetMapping("/api/transactions")
     List<TransactionResponse> getTransactionsFromAccountId(@RequestParam String accountId);
 }

@@ -56,7 +56,7 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<AccountDto> readAccountByUserId(@PathVariable Long userId){
-        return ResponseEntity.ok(accountService.readAccountByUserId(userId));
+    public ResponseEntity<List<AccountDto>> readAccountsByUserId(@PathVariable Long userId){
+        return ResponseEntity.ok(accountService.readAccountsByUserId(userId));
     }
 }
