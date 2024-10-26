@@ -11,7 +11,7 @@ import com.fund_transfer.model.dto.response.Response;
 
 import java.util.List;
 
-@FeignClient(name = "transactions-service", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "transaction-service", configuration = FeignClientConfiguration.class)
 public interface TransactionService {
 
     /**
@@ -20,7 +20,7 @@ public interface TransactionService {
      * @param transaction Đối tượng giao dịch chứa thông tin chi tiết của giao dịch.
      * @return Đối tượng ResponseEntity chứa phản hồi của giao dịch.
      */
-    @PostMapping("/transactions")
+    @PostMapping("/api/transactions")
     ResponseEntity<Response> makeTransaction(@RequestBody Transaction transaction);
 
     /**
@@ -30,6 +30,7 @@ public interface TransactionService {
      * @param transactionReference Tham chiếu cho giao dịch.
      * @return Đối tượng phản hồi chứa thông tin phản hồi.
      */
-    @PostMapping("/transactions/internal")
-    ResponseEntity<Response> makeInternalTransactions(@RequestBody List<Transaction> transactions, @RequestParam String transactionReference);
+    @PostMapping("/api/transactions/internal")
+    ResponseEntity<Response> makeInternalTransactions(@RequestBody List<Transaction> transactions, @RequestParam("transactionReference") String transactionReference);
+
 }

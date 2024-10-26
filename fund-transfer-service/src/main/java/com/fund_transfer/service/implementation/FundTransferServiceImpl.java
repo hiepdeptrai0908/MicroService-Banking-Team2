@@ -57,40 +57,50 @@ public class FundTransferServiceImpl implements FundTransferService {
         Account fromAccount;
 
         ResponseEntity<Account> response = accountService.readByAccountNumber(fundTransferRequest.getFromAccount());
-        if(Objects.isNull(response.getBody())){
-            log.error("Tài khoản yêu cầu "+fundTransferRequest.getFromAccount()+" không được tìm thấy trên máy chủ");
+        if (Objects.isNull(response.getBody())) {
+            log.error("Tài khoản yêu cầu " + fundTransferRequest.getFromAccount() + " không được tìm thấy trên máy chủ");
             throw new ResourceNotFound("Tài khoản yêu cầu không được tìm thấy trên máy chủ", GlobalErrorCode.NOT_FOUND);
         }
         fromAccount = response.getBody();
-        if (!fromAccount.getAccountStatus().equals("ACTIVE")) {
+
+        // Kiểm tra trạng thái tài khoản
+        if (!fromAccount.getAccountStatus().equalsIgnoreCase("ACTIVE")) {
             log.error("Trạng thái tài khoản là đang chờ xử lý hoặc không hoạt động, vui lòng cập nhật trạng thái tài khoản");
             throw new AccountUpdateException("Trạng thái tài khoản là: đang chờ xử lý", GlobalErrorCode.NOT_ACCEPTABLE);
         }
+
+        // Kiểm tra số dư khả dụng
         if (fromAccount.getAvailableBalance().compareTo(fundTransferRequest.getAmount()) < 0) {
             log.error("Số tiền cần chuyển không đủ");
             throw new InsufficientBalance("Số tiền yêu cầu không có sẵn", GlobalErrorCode.NOT_ACCEPTABLE);
         }
+
         Account toAccount;
         response = accountService.readByAccountNumber(fundTransferRequest.getToAccount());
-        if(Objects.isNull(response.getBody())) {
-            log.error("Tài khoản yêu cầu "+fundTransferRequest.getToAccount()+" không được tìm thấy trên máy chủ");
+        if (Objects.isNull(response.getBody())) {
+            log.error("Tài khoản yêu cầu " + fundTransferRequest.getToAccount() + " không được tìm thấy trên máy chủ");
             throw new ResourceNotFound("Tài khoản yêu cầu không được tìm thấy trên máy chủ", GlobalErrorCode.NOT_FOUND);
         }
         toAccount = response.getBody();
+
         String transactionId = internalTransfer(fromAccount, toAccount, fundTransferRequest.getAmount());
+
         FundTransfer fundTransfer = FundTransfer.builder()
                 .transferType(TransferType.INTERNAL)
                 .amount(fundTransferRequest.getAmount())
                 .fromAccount(fromAccount.getAccountNumber())
                 .transactionReference(transactionId)
                 .status(TransactionStatus.SUCCESS)
-                .toAccount(toAccount.getAccountNumber()).build();
+                .toAccount(toAccount.getAccountNumber())
+                .build();
 
         fundTransferRepository.save(fundTransfer);
         return FundTransferResponse.builder()
                 .transactionId(transactionId)
-                .message("Chuyển tiền thành công").build();
+                .message("Chuyển tiền thành công")
+                .build();
     }
+
 
     /**
      * Chuyển tiền từ một tài khoản sang tài khoản khác trong hệ thống.
@@ -122,6 +132,9 @@ public class FundTransferServiceImpl implements FundTransferService {
                         .description("Chuyển tiền nội bộ nhận từ: "+fromAccount.getAccountNumber()).build());
 
         String transactionReference = UUID.randomUUID().toString();
+
+        System.out.println("transactions DTO: " + transactions);
+        System.out.println("transactionReference: " + transactionReference);
         transactionService.makeInternalTransactions(transactions, transactionReference);
         return transactionReference;
     }
