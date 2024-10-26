@@ -3,7 +3,7 @@ package com.account_service.controller;
 import com.account_service.model.dto.AccountDto;
 import com.account_service.model.dto.AccountStatusUpdate;
 import com.account_service.model.dto.external.TransactionResponse;
-import com.account_service.model.dto.response.Response;
+import com.account_service.model.dto.response.AccountResponse;
 import com.account_service.service.AccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +21,12 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping
-    public ResponseEntity<Response> createAccount(@RequestBody AccountDto accountDto, HttpServletRequest request) {
+    public ResponseEntity<AccountResponse> createAccount(@RequestBody AccountDto accountDto, HttpServletRequest request) {
         return new ResponseEntity<>(accountService.createAccount(accountDto, request), HttpStatus.CREATED);
     }
 
     @PatchMapping
-    public ResponseEntity<Response> updateAccountStatus(@RequestParam String accountNumber, @RequestBody AccountStatusUpdate accountStatusUpdate) {
+    public ResponseEntity<AccountResponse> updateAccountStatus(@RequestParam String accountNumber, @RequestBody AccountStatusUpdate accountStatusUpdate) {
         return ResponseEntity.ok(accountService.updateStatus(accountNumber, accountStatusUpdate));
     }
 
@@ -36,7 +36,7 @@ public class AccountController {
     }
 
     @PutMapping
-    public ResponseEntity<Response> updateAccount(@RequestParam String accountNumber, @RequestBody AccountDto accountDto) {
+    public ResponseEntity<AccountResponse> updateAccount(@RequestParam String accountNumber, @RequestBody AccountDto accountDto) {
         return ResponseEntity.ok(accountService.updateAccount(accountNumber, accountDto));
     }
 
@@ -51,7 +51,7 @@ public class AccountController {
     }
 
     @PutMapping("/closure")
-    public ResponseEntity<Response> closeAccount(@RequestParam String accountNumber) {
+    public ResponseEntity<AccountResponse> closeAccount(@RequestParam String accountNumber) {
         return ResponseEntity.ok(accountService.closeAccount(accountNumber));
     }
 
