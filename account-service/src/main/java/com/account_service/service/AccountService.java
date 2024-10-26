@@ -4,7 +4,7 @@ package com.account_service.service;
 import com.account_service.model.dto.AccountDto;
 import com.account_service.model.dto.AccountStatusUpdate;
 import com.account_service.model.dto.external.TransactionResponse;
-import com.account_service.model.dto.response.Response;
+import com.account_service.model.dto.response.AccountResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public interface AccountService {
      * @param accountDto the account information to be created
      * @return the response containing the created account
      */
-    Response createAccount(AccountDto accountDto, HttpServletRequest request);
+    AccountResponse createAccount(AccountDto accountDto, HttpServletRequest request);
 
     /**
      * Updates the status of an account.
@@ -26,7 +26,7 @@ public interface AccountService {
      * @param accountUpdate   The account status update to apply.
      * @return                The response indicating the success or failure of the update.
      */
-    Response updateStatus(String accountNumber, AccountStatusUpdate accountUpdate);
+    AccountResponse updateStatus(String accountNumber, AccountStatusUpdate accountUpdate);
 
     /**
      * Retrieves an account by its account number.
@@ -43,7 +43,7 @@ public interface AccountService {
      * @param accountDto The account data to update the account with.
      * @return The response indicating the result of the update operation.
      */
-    Response updateAccount(String accountNumber, AccountDto accountDto);
+    AccountResponse updateAccount(String accountNumber, AccountDto accountDto);
 
     /**
      * Retrieves the balance of the account with the specified account number.
@@ -67,7 +67,7 @@ public interface AccountService {
      * @param accountNumber The account number of the account to be closed.
      * @return The response indicating the result of the account closure.
      */
-    Response closeAccount(String accountNumber);
+    AccountResponse closeAccount(String accountNumber);
 
     /**
      * Retrieves the account information for a given user ID.
