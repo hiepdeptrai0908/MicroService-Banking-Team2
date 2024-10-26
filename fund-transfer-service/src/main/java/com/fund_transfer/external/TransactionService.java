@@ -11,7 +11,7 @@ import com.fund_transfer.model.dto.response.Response;
 
 import java.util.List;
 
-@FeignClient(name = "transaction-service", configuration = FeignClientConfiguration.class)
+@FeignClient(name = "transactions-service", configuration = FeignClientConfiguration.class)
 public interface TransactionService {
 
     /**
