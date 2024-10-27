@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.transaction_service</groupId>
-	<artifactId>transaction-service</artifactId>
+	<artifactId>transactionDto-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>transaction-service</name>
+	<name>transactionDto-service</name>
 	<description>Transaction Service</description>
 	<url/>
 	<licenses>

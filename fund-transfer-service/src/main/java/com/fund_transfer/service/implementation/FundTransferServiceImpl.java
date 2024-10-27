@@ -2,9 +2,9 @@ package com.fund_transfer.service.implementation;
 
 import com.fund_transfer.exception.InsufficientBalance;
 import com.fund_transfer.exception.ResourceNotFound;
-import com.fund_transfer.model.dto.Account;
+import com.fund_transfer.model.dto.AccountDto;
 import com.fund_transfer.model.dto.FundTransferDto;
-import com.fund_transfer.model.dto.Transaction;
+import com.fund_transfer.model.dto.TransactionDto;
 import com.fund_transfer.repository.FundTransferRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,9 +54,9 @@ public class FundTransferServiceImpl implements FundTransferService {
     @Override
     public FundTransferResponse fundTransfer(FundTransferRequest fundTransferRequest) {
 
-        Account fromAccount;
+        AccountDto fromAccount;
 
-        ResponseEntity<Account> response = accountService.readByAccountNumber(fundTransferRequest.getFromAccount());
+        ResponseEntity<AccountDto> response = accountService.readByAccountNumber(fundTransferRequest.getFromAccount());
         if (Objects.isNull(response.getBody())) {
             log.error("Tài khoản yêu cầu " + fundTransferRequest.getFromAccount() + " không được tìm thấy trên máy chủ");
             throw new ResourceNotFound("Tài khoản yêu cầu không được tìm thấy trên máy chủ", GlobalErrorCode.NOT_FOUND);
@@ -75,7 +75,7 @@ public class FundTransferServiceImpl implements FundTransferService {
             throw new InsufficientBalance("Số tiền yêu cầu không có sẵn", GlobalErrorCode.NOT_ACCEPTABLE);
         }
 
-        Account toAccount;
+        AccountDto toAccount;
         response = accountService.readByAccountNumber(fundTransferRequest.getToAccount());
         if (Objects.isNull(response.getBody())) {
             log.error("Tài khoản yêu cầu " + fundTransferRequest.getToAccount() + " không được tìm thấy trên máy chủ");
@@ -110,7 +110,7 @@ public class FundTransferServiceImpl implements FundTransferService {
      * @param amount Số tiền chuyển.
      * @return Số tham chiếu giao dịch.
      */
-    private String internalTransfer(Account fromAccount, Account toAccount, BigDecimal amount) {
+    private String internalTransfer(AccountDto fromAccount, AccountDto toAccount, BigDecimal amount) {
 
         fromAccount.setAvailableBalance(fromAccount.getAvailableBalance().subtract(amount));
         accountService.updateAccount(fromAccount.getAccountNumber(), fromAccount);
@@ -118,24 +118,25 @@ public class FundTransferServiceImpl implements FundTransferService {
         toAccount.setAvailableBalance(toAccount.getAvailableBalance().add(amount));
         accountService.updateAccount(toAccount.getAccountNumber(), toAccount);
 
-        List<Transaction> transactions = List.of(
-                Transaction.builder()
+        List<TransactionDto> transactionDtos = List.of(
+                TransactionDto.builder()
                         .accountId(fromAccount.getAccountNumber())
                         .transactionType("INTERNAL_TRANSFER")
                         .amount(amount.negate())
-                        .description("Chuyển tiền nội bộ từ "+fromAccount.getAccountNumber()+" đến "+toAccount.getAccountNumber())
+                        .description("Chuyển tiền nội bộ từ "+ fromAccount.getAccountNumber()+" đến "+ toAccount.getAccountNumber())
                         .build(),
-                Transaction.builder()
+                TransactionDto.builder()
                         .accountId(toAccount.getAccountNumber())
                         .transactionType("INTERNAL_TRANSFER")
                         .amount(amount)
-                        .description("Chuyển tiền nội bộ nhận từ: "+fromAccount.getAccountNumber()).build());
+                        .description("Chuyển tiền nội bộ nhận từ: "+fromAccount.getAccountNumber())
+                        .build());
 
         String transactionReference = UUID.randomUUID().toString();
 
-        System.out.println("transactions DTO: " + transactions);
+        System.out.println("transactionDtos DTO: " + transactionDtos);
         System.out.println("transactionReference: " + transactionReference);
-        transactionService.makeInternalTransactions(transactions, transactionReference);
+        transactionService.makeInternalTransactions(transactionDtos, transactionReference);
         return transactionReference;
     }
 

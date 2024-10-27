@@ -100,11 +100,22 @@ public class TransactionServiceImpl implements TransactionService {
         // Convert the list of transaction DTOs to entities
         List<Transaction> transactions = transactionMapper.convertToEntityList(transactionDtos);
 
+
         // Update the status of each transaction to 'COMPLETED'
         transactions.forEach(transaction -> {
             transaction.setTransactionType(TransactionType.INTERNAL_TRANSFER);
             transaction.setStatus(TransactionStatus.COMPLETED);
             transaction.setReferenceId(transactionReference);
+
+            // Map the description from TransactionDto to comments in Transaction
+            TransactionDto matchingDto = transactionDtos.stream()
+                    .filter(dto -> dto.getAccountId().equals(transaction.getAccountId())) // Adjust this condition as needed
+                    .findFirst()
+                    .orElse(null);
+
+            if (matchingDto != null) {
+                transaction.setComments(matchingDto.getDescription());
+            }
         });
 
         // Save all the completed transactions to the transaction repository
