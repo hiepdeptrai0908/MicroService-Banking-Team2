@@ -1,5 +1,6 @@
 package com.account_service.model.dto.response;
 
+import com.account_service.model.dto.AccountDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Response {
-
+public class AccountResponse {
     private String responseCode;
-
     private String message;
+
+    private AccountDto accountDto;
 }

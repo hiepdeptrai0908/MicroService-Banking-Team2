@@ -10,7 +10,7 @@ import com.account_service.model.dto.AccountDto;
 import com.account_service.model.dto.AccountStatusUpdate;
 import com.account_service.model.dto.external.TransactionResponse;
 import com.account_service.model.dto.external.UserDto;
-import com.account_service.model.dto.response.Response;
+import com.account_service.model.dto.response.AccountResponse;
 import com.account_service.model.entity.Account;
 import com.account_service.model.mapper.AccountMapper;
 import com.account_service.repository.AccountRepository;
@@ -52,22 +52,20 @@ public class AccountServiceImpl implements AccountService {
     private String success;
 
     @Override
-    public Response createAccount(AccountDto accountDto, HttpServletRequest request) {
+    public AccountResponse createAccount(AccountDto accountDto, HttpServletRequest request) {
 
+        // Extract userId from JWT
         Long userId = jwtUtil.extractClaimsFromJwt(request);
-
         accountDto.setUserId(userId);
 
+        // Fetch user information from user-service
         ResponseEntity<UserDto> user;
         try {
-            // FeignClient call to get user by ID
             user = userService.readUserById(userId);
         } catch (FeignException.NotFound e) {
-            // Handle 404 - Not Found from the user service
             throw new ResourceNotFound("User not found on the server");
         } catch (FeignException e) {
-            // Handle other FeignClient-related exceptions
-            log.error("Error during FeignClient call: " + e.getMessage(), e);
+            log.error("FeignClient error: " + e.getMessage(), e);
             throw new ServiceException("An error occurred while communicating with the user service");
         }
 
@@ -75,40 +73,66 @@ public class AccountServiceImpl implements AccountService {
             throw new ResourceNotFound("User not found on the server");
         }
 
-        accountRepository.findAccountByUserIdAndAccountType(accountDto.getUserId(), AccountType.valueOf(accountDto.getAccountType()))
-                .ifPresent(account -> {
-                    log.error("Account already exists on the server");
-                    throw new ResourceConflict("Account already exists on the server");
-                });
+        // Ensure account does not already exist for this user and account type
+//        accountRepository.findAccountByUserIdAndAccountType(userId, AccountType.valueOf(accountDto.getAccountType()))
+//                .ifPresent(account -> {
+//                    log.error("Account already exists for user: " + userId);
+//                    throw new ResourceConflict("Account already exists on the server");
+//                });
 
+        // Convert DTO to entity
         Account account = accountMapper.convertToEntity(accountDto);
-        account.setAccountNumber(ACC_PREFIX + String.format("%07d",sequenceService.generateAccountNumber().getAccountNumber()));
+        account.setAccountNumber(ACC_PREFIX + String.format("%07d", sequenceService.generateAccountNumber().getAccountNumber()));
         account.setAccountStatus(AccountStatus.PENDING);
-        account.setAvailableBalance(BigDecimal.valueOf(0));
+        account.setAvailableBalance(BigDecimal.ZERO); // Default balance is zero
         account.setAccountType(AccountType.valueOf(accountDto.getAccountType()));
-        accountRepository.save(account);
-        return Response.builder()
+
+        // Save account and retrieve the saved entity
+        Account savedAccount = accountRepository.save(account);
+
+        // Convert saved entity back to DTO
+        AccountDto savedAccountDto = accountMapper.convertToDto(savedAccount);
+        savedAccountDto.setAccountType(savedAccount.getAccountType().toString());
+        savedAccountDto.setAccountStatus(savedAccount.getAccountStatus().toString());
+
+        // Return response with the saved account DTO
+        return AccountResponse.builder()
                 .responseCode(success)
-                .message(" Account created successfully").build();
+                .message("Account created successfully.")
+                .accountDto(savedAccountDto) // Use saved account entity for proper fields
+                .build();
     }
 
+
     @Override
-    public Response updateStatus(String accountNumber, AccountStatusUpdate accountUpdate) {
+    public AccountResponse updateStatus(String accountNumber, AccountStatusUpdate accountUpdate) {
 
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
-                    if(account.getAccountStatus().equals(AccountStatus.ACTIVE)){
-                        throw new AccountStatusException("Account is inactive/closed");
+                    if (!account.getAccountStatus().equals(AccountStatus.ACTIVE)) {
+                        throw new AccountStatusException("Account is already inactive or closed");
                     }
-                    if(account.getAvailableBalance().compareTo(BigDecimal.ZERO) < 0 || account.getAvailableBalance().compareTo(BigDecimal.valueOf(1000)) < 0){
+                    if (account.getAvailableBalance().compareTo(BigDecimal.valueOf(1000)) < 0) {
                         throw new InSufficientFunds("Minimum balance of Rs.1000 is required");
                     }
-                    account.setAccountStatus(accountUpdate.getAccountStatus());
-                    accountRepository.save(account);
-                    return Response.builder().message("Account updated successfully").responseCode(success).build();
-                }).orElseThrow(() -> new ResourceNotFound("Account not on the server"));
 
+                    // Update account status
+                    account.setAccountStatus(accountUpdate.getAccountStatus());
+                    Account updatedAccount = accountRepository.save(account);
+
+                    // Convert updated account to DTO
+                    AccountDto updatedAccountDto = accountMapper.convertToDto(updatedAccount);
+                    updatedAccountDto.setAccountType(updatedAccount.getAccountType().toString());
+                    updatedAccountDto.setAccountStatus(updatedAccount.getAccountStatus().toString());
+
+                    return AccountResponse.builder()
+                            .message("Account status updated successfully")
+                            .responseCode(success)
+                            .accountDto(updatedAccountDto) // Return updated account details
+                            .build();
+                }).orElseThrow(() -> new ResourceNotFound("Account not found on the server"));
     }
+
 
     @Override
     public AccountDto readAccountByAccountNumber(String accountNumber) {
@@ -124,17 +148,26 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Response updateAccount(String accountNumber, AccountDto accountDto) {
+    public AccountResponse updateAccount(String accountNumber, AccountDto accountDto) {
 
-        return accountRepository.findAccountByAccountNumber(accountDto.getAccountNumber())
+        return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
                     BeanUtils.copyProperties(accountDto, account);
-                    accountRepository.save(account);
-                    return Response.builder()
+                    Account updatedAccount = accountRepository.save(account);
+
+                    // Convert updated account entity to DTO
+                    AccountDto updatedAccountDto = accountMapper.convertToDto(updatedAccount);
+                    updatedAccountDto.setAccountType(updatedAccount.getAccountType().toString());
+                    updatedAccountDto.setAccountStatus(updatedAccount.getAccountStatus().toString());
+
+                    return AccountResponse.builder()
                             .responseCode(success)
-                            .message("Account updated successfully").build();
+                            .message("Account updated successfully")
+                            .accountDto(updatedAccountDto) // Return updated account details
+                            .build();
                 }).orElseThrow(() -> new ResourceNotFound("Account not found on the server"));
     }
+
 
     @Override
     public String getBalance(String accountNumber) {
@@ -150,20 +183,30 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Response closeAccount(String accountNumber) {
+    public AccountResponse closeAccount(String accountNumber) {
 
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
-                    if(BigDecimal.valueOf(Double.parseDouble(getBalance(accountNumber))).compareTo(BigDecimal.ZERO) != 0) {
-                        throw new AccountClosingException("Balance should be zero");
+                    if (BigDecimal.valueOf(Double.parseDouble(getBalance(accountNumber))).compareTo(BigDecimal.ZERO) != 0) {
+                        throw new AccountClosingException("Account balance must be zero to close the account");
                     }
-                    account.setAccountStatus(AccountStatus.CLOSED);
-                    return Response.builder()
-                            .message("Account closed successfully").message(success)
-                            .build();
-                }).orElseThrow(ResourceNotFound::new);
 
+                    account.setAccountStatus(AccountStatus.CLOSED);
+                    Account closedAccount = accountRepository.save(account);
+
+                    // Convert closed account to DTO
+                    AccountDto closedAccountDto = accountMapper.convertToDto(closedAccount);
+                    closedAccountDto.setAccountType(closedAccount.getAccountType().toString());
+                    closedAccountDto.setAccountStatus(closedAccount.getAccountStatus().toString());
+
+                    return AccountResponse.builder()
+                            .message("Account closed successfully")
+                            .responseCode(success)
+                            .accountDto(closedAccountDto) // Return closed account details
+                            .build();
+                }).orElseThrow(() -> new ResourceNotFound("Account not found on the server"));
     }
+
 
     @Override
     public List<AccountDto> readAccountsByUserId(Long userId) {
