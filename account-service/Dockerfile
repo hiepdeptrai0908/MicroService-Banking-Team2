@@ -5,7 +5,7 @@ FROM openjdk:17-jdk
 WORKDIR /app
 
 # Sao chép file JAR vào thư mục làm việc trong container
-COPY target/accountDto-service-0.0.1-SNAPSHOT.jar /app/accountDto-service-0.0.1-SNAPSHOT.jar
+COPY target/account-service-0.0.1-SNAPSHOT.jar /app/account-service-0.0.1-SNAPSHOT.jar
 
 # Chạy ứng dụng khi container khởi động
-ENTRYPOINT ["java", "-jar", "accountDto-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "account-service-0.0.1-SNAPSHOT.jar"]

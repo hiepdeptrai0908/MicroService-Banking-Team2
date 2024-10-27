@@ -66,7 +66,7 @@ public class FundTransferServiceImpl implements FundTransferService {
         // Kiểm tra trạng thái tài khoản
         if (!fromAccount.getAccountStatus().equalsIgnoreCase("ACTIVE")) {
             log.error("Trạng thái tài khoản là đang chờ xử lý hoặc không hoạt động, vui lòng cập nhật trạng thái tài khoản");
-            throw new AccountUpdateException("Trạng thái tài khoản là: đang chờ xử lý", GlobalErrorCode.NOT_ACCEPTABLE);
+            throw new AccountUpdateException("Trạng thái tài khoản là đang chờ xử lý hoặc không hoạt động, vui lòng cập nhật trạng thái tài khoản !", GlobalErrorCode.NOT_ACCEPTABLE);
         }
 
         // Kiểm tra số dư khả dụng
@@ -94,10 +94,10 @@ public class FundTransferServiceImpl implements FundTransferService {
                 .toAccount(toAccount.getAccountNumber())
                 .build();
 
-        fundTransferRepository.save(fundTransfer);
         return FundTransferResponse.builder()
                 .transactionId(transactionId)
                 .message("Chuyển tiền thành công")
+                .fundTransfer(fundTransferRepository.save(fundTransfer))
                 .build();
     }
 

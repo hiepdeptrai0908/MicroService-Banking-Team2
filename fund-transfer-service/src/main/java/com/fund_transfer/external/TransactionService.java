@@ -30,7 +30,7 @@ public interface TransactionService {
      * @param transactionReference Tham chiếu cho giao dịch.
      * @return Đối tượng phản hồi chứa thông tin phản hồi.
      */
-    @PostMapping("/api/transactionDtos/internal")
+    @PostMapping("/api/transactions/internal")
     ResponseEntity<Response> makeInternalTransactions(@RequestBody List<TransactionDto> transactionDtos, @RequestParam("transactionReference") String transactionReference);
 
 }
