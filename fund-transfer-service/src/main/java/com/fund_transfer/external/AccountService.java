@@ -1,7 +1,7 @@
 package com.fund_transfer.external;
 
 import com.fund_transfer.configuration.FeignClientConfiguration;
-import com.fund_transfer.model.dto.Account;
+import com.fund_transfer.model.dto.AccountDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,15 +20,15 @@ public interface AccountService {
      * @return The account matching the account number.
      */
     @GetMapping("/api/accounts")
-    ResponseEntity<Account> readByAccountNumber(@RequestParam String accountNumber);
+    ResponseEntity<AccountDto> readByAccountNumber(@RequestParam String accountNumber);
 
     /**
-     * Update an account with the given account number.
+     * Update an accountDto with the given accountDto number.
      *
-     * @param accountNumber The account number of the account to be updated.
-     * @param account The updated account information.
+     * @param accountNumber The accountDto number of the accountDto to be updated.
+     * @param accountDto The updated accountDto information.
      * @return The response entity containing the response.
      */
     @PutMapping("/api/accounts")
-    ResponseEntity<Response> updateAccount(@RequestParam String accountNumber, @RequestBody Account account);
+    ResponseEntity<Response> updateAccount(@RequestParam String accountNumber, @RequestBody AccountDto accountDto);
 }

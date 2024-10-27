@@ -58,7 +58,7 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
 
 ### **Thành viên 2 (Account Service)**: 
 - Xây dựng các API quản lý tài khoản, bao gồm xem và chỉnh sửa thông tin tài khoản.
-- Code tại nhánh: `git checkout account-service`
+- Code tại nhánh: `git checkout accountDto-service`
 - Cổng `server.port=8082`
 
 ### **Thành viên 3 (Fund Transfer Service)**: 
@@ -68,7 +68,7 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
 
 ### **Thành viên 4 (Transactions Service)**: 
 - Xây dựng các API liên quan đến quản lý giao dịch, bao gồm xem lịch sử giao dịch, nạp/rút tiền.
-- Code tại nhánh: `git checkout transaction-service`
+- Code tại nhánh: `git checkout transactionDto-service`
 - Cổng `server.port=8084`
 
 ### **Thành viên 5 (Cấu hình và triển khai cơ sở hạ tầng)**: 
@@ -79,6 +79,6 @@ Link github banking team 2: [MicroService-Banking-Team2](https://github.com/hiep
 
 ### **Service phụ của Account Service (Sequence Generator)**:
 - Service phụ có nhiệm vụ: Tự động tạo ra **số tài khoản** khi tạo Account mới.
-- **Account Service** sẽ gọi api chéo sang **Sequence Generator** Service để tạo account
+- **Account Service** sẽ gọi api chéo sang **Sequence Generator** Service để tạo accountDto
 - Code tại nhánh: `git checkout sequence-generator`
 - Cổng API Gateway `server.port=8085`
