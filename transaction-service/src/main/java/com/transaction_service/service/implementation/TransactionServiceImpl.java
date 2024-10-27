@@ -22,6 +22,7 @@ import com.transaction_service.model.response.Response;
 import com.transaction_service.model.response.TransactionRequest;
 import com.transaction_service.repository.TransactionRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -80,10 +81,16 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setReferenceId(UUID.randomUUID().toString());
 
         accountService.updateAccount(transactionDto.getAccountId(), account);
-        transactionRepository.save(transaction);
 
+        String messageCustom = "";
+        if (transaction.getTransactionType().equals(TransactionType.DEPOSIT)) {
+            messageCustom = "Đã nạp tiền thành công.";
+        } else if (transaction.getTransactionType().equals(TransactionType.WITHDRAWAL)) {
+            messageCustom = "Đã rút tiền thành công.";
+        }
         return Response.builder()
-                .message("Transaction completed successfully")
+                .message(messageCustom)
+                .transactions(Collections.singletonList(transactionRepository.save(transaction)))
                 .responseCode(ok).build();
     }
 
@@ -119,12 +126,14 @@ public class TransactionServiceImpl implements TransactionService {
         });
 
         // Save all the completed transactions to the transaction repository
-        transactionRepository.saveAll(transactions);
+
 
         // Return the response indicating the completion of the transaction
         return Response.builder()
                 .responseCode(ok)
+                .transactions(transactionRepository.saveAll(transactions))
                 .message("Transaction completed successfully").build();
+
     }
 
     /**
