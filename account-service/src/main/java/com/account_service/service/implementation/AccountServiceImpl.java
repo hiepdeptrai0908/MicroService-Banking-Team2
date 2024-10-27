@@ -109,11 +109,11 @@ public class AccountServiceImpl implements AccountService {
 
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
-                    if (!account.getAccountStatus().equals(AccountStatus.ACTIVE)) {
-                        throw new AccountStatusException("Account is already inactive or closed");
+                    if (account.getAccountStatus().equals(AccountStatus.ACTIVE)) {
+                        throw new AccountStatusException("Tài khoản đã được kích hoạt.");
                     }
                     if (account.getAvailableBalance().compareTo(BigDecimal.valueOf(1000)) < 0) {
-                        throw new InSufficientFunds("Minimum balance of Rs.1000 is required");
+                        throw new InSufficientFunds("Yêu cầu tài khoản có số dư tối thiểu là 1000");
                     }
 
                     // Update account status
@@ -126,11 +126,11 @@ public class AccountServiceImpl implements AccountService {
                     updatedAccountDto.setAccountStatus(updatedAccount.getAccountStatus().toString());
 
                     return AccountResponse.builder()
-                            .message("Account status updated successfully")
+                            .message("Cập nhật trạng thái tài khoản thành công.")
                             .responseCode(success)
                             .accountDto(updatedAccountDto) // Return updated account details
                             .build();
-                }).orElseThrow(() -> new ResourceNotFound("Account not found on the server"));
+                }).orElseThrow(() -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"));
     }
 
 
@@ -162,10 +162,10 @@ public class AccountServiceImpl implements AccountService {
 
                     return AccountResponse.builder()
                             .responseCode(success)
-                            .message("Account updated successfully")
+                            .message("Cập nhật tài khoản thành công.")
                             .accountDto(updatedAccountDto) // Return updated account details
                             .build();
-                }).orElseThrow(() -> new ResourceNotFound("Account not found on the server"));
+                }).orElseThrow(() -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"));
     }
 
 
@@ -188,7 +188,7 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
                     if (BigDecimal.valueOf(Double.parseDouble(getBalance(accountNumber))).compareTo(BigDecimal.ZERO) != 0) {
-                        throw new AccountClosingException("Account balance must be zero to close the account");
+                        throw new AccountClosingException("Số dư tài khoản phải bằng 0 để đóng tài khoản");
                     }
 
                     account.setAccountStatus(AccountStatus.CLOSED);
@@ -200,11 +200,11 @@ public class AccountServiceImpl implements AccountService {
                     closedAccountDto.setAccountStatus(closedAccount.getAccountStatus().toString());
 
                     return AccountResponse.builder()
-                            .message("Account closed successfully")
+                            .message("Đóng tài khoản thành công")
                             .responseCode(success)
                             .accountDto(closedAccountDto) // Return closed account details
                             .build();
-                }).orElseThrow(() -> new ResourceNotFound("Account not found on the server"));
+                }).orElseThrow(() -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"));
     }
 
 
