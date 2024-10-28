@@ -6,9 +6,12 @@ import com.transaction_service.exception.InsufficientBalance;
 import com.transaction_service.exception.ResourceNotFound;
 import com.transaction_service.external.AccountService;
 import com.transaction_service.service.TransactionService;
+import com.transaction_service.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionMapper transactionMapper = new TransactionMapper();
 
+    @Autowired
+    private final JwtUtil jwtUtil;
+
     @Value("${spring.application.ok}")
     private String ok;
 
@@ -51,11 +57,19 @@ public class TransactionServiceImpl implements TransactionService {
      * @throws InsufficientBalance     if there is insufficient balance in the account
      */
     @Override
-    public Response addTransaction(TransactionDto transactionDto) {
-
+    public Response addTransaction(TransactionDto transactionDto, HttpServletRequest request) {
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
         ResponseEntity<Account> response = accountService.readByAccountNumber(transactionDto.getAccountId());
+
         if (Objects.isNull(response.getBody())){
             throw new ResourceNotFound("Requested account not found on the server", GlobalErrorCode.NOT_FOUND);
+        }
+
+        Long userId = response.getBody().getUserId();
+
+        if (!authenticatedUserId.equals(userId)) {
+            log.error("User cannot access this account");
+            throw new ResourceNotFound("User cannot access this account", GlobalErrorCode.FORBIDDEN);
         }
         Account account = response.getBody();
         Transaction transaction = transactionMapper.convertToEntity(transactionDto);
@@ -108,14 +122,10 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setReferenceId(transactionReference);
 
             // Map the description from TransactionDto to comments in Transaction
-            TransactionDto matchingDto = transactionDtos.stream()
+            transactionDtos.stream()
                     .filter(dto -> dto.getAccountId().equals(transaction.getAccountId())) // Adjust this condition as needed
-                    .findFirst()
-                    .orElse(null);
+                    .findFirst().ifPresent(matchingDto -> transaction.setComments(matchingDto.getDescription()));
 
-            if (matchingDto != null) {
-                transaction.setComments(matchingDto.getDescription());
-            }
         });
 
         // Save all the completed transactions to the transaction repository
@@ -134,8 +144,16 @@ public class TransactionServiceImpl implements TransactionService {
      * @return a list of transaction requests
      */
     @Override
-    public List<TransactionRequest> getTransaction(String accountId) {
+    public List<TransactionRequest> getTransaction(String accountId, HttpServletRequest request) {
 
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        if(Objects.isNull(accountService.readByAccountNumber(accountId).getBody())){
+            throw new ResourceNotFound("Requested account not found on the server", GlobalErrorCode.NOT_FOUND);
+        }
+        Long userId = accountService.readByAccountNumber(accountId).getBody().getUserId();
+        if (!authenticatedUserId.equals(userId)) {
+            throw new ResourceNotFound("User cannot access this account transaction.", GlobalErrorCode.FORBIDDEN);
+        }
         return transactionRepository.findTransactionByAccountId(accountId)
                 .stream().map(transaction -> {
                     TransactionRequest transactionRequest = new TransactionRequest();

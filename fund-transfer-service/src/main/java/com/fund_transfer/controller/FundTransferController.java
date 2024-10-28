@@ -1,5 +1,6 @@
 package com.fund_transfer.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,8 @@ public class FundTransferController {
      * @return Đối tượng phản hồi chứa phản hồi chuyển tiền.
      */
     @PostMapping
-    public ResponseEntity<FundTransferResponse> fundTransfer(@RequestBody FundTransferRequest fundTransferRequest) {
-        return new ResponseEntity<>(fundTransferService.fundTransfer(fundTransferRequest), HttpStatus.CREATED);
+    public ResponseEntity<FundTransferResponse> fundTransfer(@RequestBody FundTransferRequest fundTransferRequest, HttpServletRequest request) {
+        return new ResponseEntity<>(fundTransferService.fundTransfer(fundTransferRequest, request), HttpStatus.CREATED);
     }
 
     /**
@@ -48,7 +49,7 @@ public class FundTransferController {
      * @return Danh sách các DTO chuyển tiền.
      */
     @GetMapping
-    public ResponseEntity<List<FundTransferDto>> getAllTransfersByAccountId(@RequestParam String accountId) {
-        return new ResponseEntity<>(fundTransferService.getAllTransfersByAccountId(accountId), HttpStatus.OK);
+    public ResponseEntity<List<FundTransferDto>> getAllTransfersByAccountId(@RequestParam String accountId, HttpServletRequest request) {
+        return new ResponseEntity<>(fundTransferService.getAllTransfersByAccountId(accountId, request), HttpStatus.OK);
     }
 }

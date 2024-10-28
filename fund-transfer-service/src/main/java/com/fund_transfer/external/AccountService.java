@@ -2,6 +2,7 @@ package com.fund_transfer.external;
 
 import com.fund_transfer.configuration.FeignClientConfiguration;
 import com.fund_transfer.model.dto.AccountDto;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -3,6 +3,7 @@ package com.transaction_service.service;
 import com.transaction_service.model.dto.TransactionDto;
 import com.transaction_service.model.response.Response;
 import com.transaction_service.model.response.TransactionRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface TransactionService {
      * @param transactionDto The transaction to add.
      * @return The response indicating whether the transaction was successfully added.
      */
-    Response addTransaction(TransactionDto transactionDto);
+    Response addTransaction(TransactionDto transactionDto, HttpServletRequest request);
 
     /**
      * Process an internal transaction.
@@ -31,7 +32,7 @@ public interface TransactionService {
      * @param accountId the ID of the account
      * @return a list of transaction requests
      */
-    List<TransactionRequest> getTransaction(String accountId);
+    List<TransactionRequest> getTransaction(String accountId, HttpServletRequest request);
 
     /**
      * Retrieves a list of transaction requests by transaction reference.

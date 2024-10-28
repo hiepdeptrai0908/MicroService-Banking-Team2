@@ -11,7 +11,7 @@
 	<groupId>com.sequence-generator</groupId>
 	<artifactId>sequence-generator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>sequence_generator</name>
+	<name>sequence-generator</name>
 	<description>Sequence Generator</description>
 	<url/>
 	<licenses>

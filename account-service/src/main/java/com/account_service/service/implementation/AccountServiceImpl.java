@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,13 +32,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.account_service.model.Constants.ACC_PREFIX;
-
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
+
+    @Value("${account.prefix}")
+    private String accPrefix;
 
     private final AccountRepository accountRepository;
     private final UserService userService;
@@ -46,7 +48,8 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountMapper accountMapper = new AccountMapper();
 
-    private final JwtUtil jwtUtil = new JwtUtil();
+    @Autowired
+    private final JwtUtil jwtUtil;
 
     @Value("${spring.application.ok}")
     private String success;
@@ -82,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
 
         // Convert DTO to entity
         Account account = accountMapper.convertToEntity(accountDto);
-        account.setAccountNumber(ACC_PREFIX + String.format("%07d", sequenceService.generateAccountNumber().getAccountNumber()));
+        account.setAccountNumber(accPrefix + String.format("%07d", sequenceService.generateAccountNumber().getAccountNumber()));
         account.setAccountStatus(AccountStatus.PENDING);
         account.setAvailableBalance(BigDecimal.ZERO); // Default balance is zero
         account.setAccountType(AccountType.valueOf(accountDto.getAccountType()));
@@ -105,8 +108,16 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public AccountResponse updateStatus(String accountNumber, AccountStatusUpdate accountUpdate) {
+    public AccountResponse updateStatus(String accountNumber, AccountStatusUpdate accountUpdate, HttpServletRequest request) {
 
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        Long userId = accountRepository.findAccountByAccountNumber(accountNumber).orElseThrow(
+                () -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"))
+                .getUserId();
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập vào tài khoản này.");
+        }
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
                     if (account.getAccountStatus().equals(AccountStatus.ACTIVE)) {
@@ -135,8 +146,16 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public AccountDto readAccountByAccountNumber(String accountNumber) {
+    public AccountDto readAccountByAccountNumber(String accountNumber, HttpServletRequest request) {
 
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        Long userId = accountRepository.findAccountByAccountNumber(accountNumber).orElseThrow(
+                () -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"))
+                .getUserId();
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập vào tài khoản này.");
+        }
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
                     AccountDto accountDto = accountMapper.convertToDto(account);
@@ -148,8 +167,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateAccount(String accountNumber, AccountDto accountDto) {
+    public AccountResponse updateAccount(String accountNumber, AccountDto accountDto, HttpServletRequest request) {
 
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        Long userId = accountRepository.findAccountByAccountNumber(accountNumber).get().getUserId();
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập vào tài khoản này.");
+        }
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
                     BeanUtils.copyProperties(accountDto, account);
@@ -170,24 +195,49 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public String getBalance(String accountNumber) {
+    public String getBalance(String accountNumber, HttpServletRequest request) {
 
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        Long userId = accountRepository.findAccountByAccountNumber(accountNumber).orElseThrow(
+                        () -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"))
+                .getUserId();
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập vào tài khoản này.");
+        }
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> account.getAvailableBalance().toString())
                 .orElseThrow(ResourceNotFound::new);
     }
 
     @Override
-    public List<TransactionResponse> getTransactionsFromAccountId(String accountId) {
+    public List<TransactionResponse> getTransactionsFromAccountId(String accountId, HttpServletRequest request) {
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        Long userId = accountRepository.findAccountByAccountNumber(accountId).orElseThrow(
+                () -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"))
+                .getUserId();
+
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập vào tài khoản này.");
+        }
         return transactionService.getTransactionsFromAccountId(accountId);
     }
 
     @Override
-    public AccountResponse closeAccount(String accountNumber) {
+    public AccountResponse closeAccount(String accountNumber, HttpServletRequest request) {
 
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        Long userId = accountRepository.findAccountByAccountNumber(accountNumber).orElseThrow(
+                () -> new ResourceNotFound("Tài khoản không tồn tại trên hệ thống !"))
+                .getUserId();
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập vào tài khoản này.");
+        }
         return accountRepository.findAccountByAccountNumber(accountNumber)
                 .map(account -> {
-                    if (BigDecimal.valueOf(Double.parseDouble(getBalance(accountNumber))).compareTo(BigDecimal.ZERO) != 0) {
+                    if (BigDecimal.valueOf(Double.parseDouble(getBalance(accountNumber,request))).compareTo(BigDecimal.ZERO) != 0) {
                         throw new AccountClosingException("Số dư tài khoản phải bằng 0 để đóng tài khoản");
                     }
 
@@ -209,7 +259,12 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<AccountDto> readAccountsByUserId(Long userId) {
+    public List<AccountDto> readAccountsByUserId(Long userId, HttpServletRequest request) {
+        Long authenticatedUserId = jwtUtil.extractClaimsFromJwt(request);
+        // Check if the user is the owner of the account
+        if(!userId.equals(authenticatedUserId)){
+            throw new UnauthorizedAccessException("Bạn không có quyền truy cập.");
+        }
 
         List<Account> accounts = accountRepository.findAccountsByUserId(userId);
 
