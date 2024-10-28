@@ -21,7 +21,7 @@ public class AuthFilter implements GlobalFilter {
     public Mono<Void> filter(ServerWebExchange exchange, org.springframework.cloud.gateway.filter.GatewayFilterChain chain) {
         // Kiểm tra xem URL có phải là /api/users/login hoặc /api/users/register không
         String path = exchange.getRequest().getURI().getPath();
-        if (path.equals("/api/users/login") || path.equals("/api/users/register")) {
+        if (path.equals("/api/users/login") || path.equals("/api/users/register") || path.startsWith("/actuator")) {
             // Nếu là đường dẫn trừ thì không kiểm tra token, tiếp tục chuyển hướng
             return chain.filter(exchange);
         }
