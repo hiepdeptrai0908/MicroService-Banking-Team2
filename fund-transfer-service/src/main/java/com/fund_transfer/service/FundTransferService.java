@@ -3,6 +3,7 @@ package com.fund_transfer.service;
 import com.fund_transfer.model.dto.FundTransferDto;
 import com.fund_transfer.model.dto.request.FundTransferRequest;
 import com.fund_transfer.model.dto.response.FundTransferResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface FundTransferService {
      * @param fundTransferRequest Đối tượng yêu cầu chứa thông tin chi tiết về việc chuyển tiền.
      * @return Đối tượng phản hồi chứa kết quả của việc chuyển tiền.
      */
-    FundTransferResponse fundTransfer(FundTransferRequest fundTransferRequest);
+    FundTransferResponse fundTransfer(FundTransferRequest fundTransferRequest, HttpServletRequest request);
 
     /**
      * Lấy thông tin chi tiết của giao dịch chuyển tiền dựa trên ID tham chiếu đã cho.
@@ -30,5 +31,5 @@ public interface FundTransferService {
      * @param accountId ID của tài khoản
      * @return Danh sách các đối tượng FundTransferDto đại diện cho các giao dịch chuyển tiền
      */
-    List<FundTransferDto> getAllTransfersByAccountId(String accountId);
+    List<FundTransferDto> getAllTransfersByAccountId(String accountId, HttpServletRequest request);
 }

@@ -1,4 +1,4 @@
-package com.account_service.utils;
+package com.transaction_service.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

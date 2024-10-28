@@ -1,18 +1,18 @@
 package com.fund_transfer.service.implementation;
 
-import com.fund_transfer.exception.InsufficientBalance;
-import com.fund_transfer.exception.ResourceNotFound;
+import com.fund_transfer.exception.*;
 import com.fund_transfer.model.dto.AccountDto;
 import com.fund_transfer.model.dto.FundTransferDto;
 import com.fund_transfer.model.dto.TransactionDto;
 import com.fund_transfer.repository.FundTransferRepository;
+import com.fund_transfer.utils.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.fund_transfer.exception.AccountUpdateException;
-import com.fund_transfer.exception.GlobalErrorCode;
 import com.fund_transfer.external.AccountService;
 import com.fund_transfer.external.TransactionService;
 import com.fund_transfer.model.mapper.FundTransferMapper;
@@ -42,6 +42,9 @@ public class FundTransferServiceImpl implements FundTransferService {
 
     private final FundTransferMapper fundTransferMapper = new FundTransferMapper();
 
+    @Autowired
+    private final JwtUtil jwtUtil;
+
     /**
      * Chuyển tiền từ một tài khoản sang tài khoản khác.
      *
@@ -52,11 +55,18 @@ public class FundTransferServiceImpl implements FundTransferService {
      * @throws InsufficientBalance Nếu số dư cần thiết để chuyển không đủ.
      */
     @Override
-    public FundTransferResponse fundTransfer(FundTransferRequest fundTransferRequest) {
+    public FundTransferResponse fundTransfer(FundTransferRequest fundTransferRequest, HttpServletRequest request) {
 
         AccountDto fromAccount;
+        try {
+            ResponseEntity<AccountDto> response = accountService.readByAccountNumber(fundTransferRequest.getFromAccount());
+        }catch (Exception e){
+            log.error("Tài khoản yêu cầu " + fundTransferRequest.getFromAccount() + " không được thuộc quyền truy cập");
+            throw new UnauthorizedAccessException("Tài khoản yêu cầu không thuộc quyền truy cập");
+        }
 
         ResponseEntity<AccountDto> response = accountService.readByAccountNumber(fundTransferRequest.getFromAccount());
+
         if (Objects.isNull(response.getBody())) {
             log.error("Tài khoản yêu cầu " + fundTransferRequest.getFromAccount() + " không được tìm thấy trên máy chủ");
             throw new ResourceNotFound("Tài khoản yêu cầu không được tìm thấy trên máy chủ", GlobalErrorCode.NOT_FOUND);
@@ -111,7 +121,6 @@ public class FundTransferServiceImpl implements FundTransferService {
      * @return Số tham chiếu giao dịch.
      */
     private String internalTransfer(AccountDto fromAccount, AccountDto toAccount, BigDecimal amount) {
-
         fromAccount.setAvailableBalance(fromAccount.getAvailableBalance().subtract(amount));
         accountService.updateAccount(fromAccount.getAccountNumber(), fromAccount);
 
@@ -162,8 +171,12 @@ public class FundTransferServiceImpl implements FundTransferService {
      * @return Danh sách các đối tượng FundTransferDto
      */
     @Override
-    public List<FundTransferDto> getAllTransfersByAccountId(String accountId) {
-
-        return fundTransferMapper.convertToDtoList(fundTransferRepository.findFundTransferByFromAccount(accountId));
+    public List<FundTransferDto> getAllTransfersByAccountId(String accountId, HttpServletRequest request) {
+        try {
+            return fundTransferMapper.convertToDtoList(fundTransferRepository.findFundTransferByFromAccount(accountId));
+        }catch (Exception e){
+            log.error("Tài khoản yêu cầu " + accountId + " không được thuộc quyền truy cập");
+            throw new UnauthorizedAccessException("Tài khoản yêu cầu không thuộc quyền truy cập");
+        }
     }
 }

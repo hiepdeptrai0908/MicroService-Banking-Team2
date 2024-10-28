@@ -1,5 +1,6 @@
 package com.transaction_service.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,8 @@ public class TransactionController {
      * @return Đối tượng phản hồi chứa dữ liệu giao dịch đã thêm.
      */
     @PostMapping
-    public ResponseEntity<Response> addTransactions(@RequestBody TransactionDto transactionDto) {
-        return new ResponseEntity<>(transactionService.addTransaction(transactionDto), HttpStatus.CREATED);
+    public ResponseEntity<Response> addTransactions(@RequestBody TransactionDto transactionDto, HttpServletRequest request) {
+        return new ResponseEntity<>(transactionService.addTransaction(transactionDto, request), HttpStatus.CREATED);
     }
 
     /**
@@ -53,8 +54,8 @@ public class TransactionController {
      * @return Danh sách các giao dịch.
      */
     @GetMapping
-    public ResponseEntity<List<TransactionRequest>> getTransactions(@RequestParam String accountId) {
-        return new ResponseEntity<>(transactionService.getTransaction(accountId), HttpStatus.OK);
+    public ResponseEntity<List<TransactionRequest>> getTransactions(@RequestParam String accountId, HttpServletRequest request) {
+        return new ResponseEntity<>(transactionService.getTransaction(accountId, request), HttpStatus.OK);
     }
 
     /**
