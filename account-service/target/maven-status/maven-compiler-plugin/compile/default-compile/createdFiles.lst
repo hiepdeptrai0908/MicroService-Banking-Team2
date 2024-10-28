@@ -10,6 +10,7 @@ com/account_service/service/AccountService.class
 com/account_service/service/implementation/AccountServiceImpl.class
 com/account_service/model/entity/Account.class
 com/account_service/model/AccountStatus.class
+com/account_service/exception/UnauthorizedAccessException.class
 com/account_service/exception/ErrorResponse.class
 com/account_service/model/dto/AccountDto.class
 com/account_service/exception/GlobalExceptionHandler.class
@@ -22,7 +23,6 @@ com/account_service/model/dto/response/AccountResponse.class
 com/account_service/model/dto/AccountDto$AccountDtoBuilder.class
 com/account_service/model/mapper/AccountMapper.class
 com/account_service/config/FeignClientErrorDecoder.class
-com/account_service/model/Constants.class
 com/account_service/exception/UnauthorizedException.class
 com/account_service/model/dto/external/UserDto.class
 com/account_service/model/dto/external/TransactionResponse$TransactionResponseBuilder.class

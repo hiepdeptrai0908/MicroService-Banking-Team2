@@ -18,10 +18,12 @@ com/transaction_service/model/response/Response.class
 com/transaction_service/model/TransactionStatus.class
 com/transaction_service/service/TransactionService.class
 com/transaction_service/model/response/TransactionRequest$TransactionRequestBuilder.class
+com/transaction_service/utils/JwtUtil.class
 com/transaction_service/exception/AccountStatusException.class
 com/transaction_service/model/entity/Transaction$TransactionBuilder.class
 com/transaction_service/model/external/Account.class
 com/transaction_service/exception/InsufficientBalance.class
+com/transaction_service/exception/UnauthorizedAccessException.class
 com/transaction_service/exception/ErrorResponse$ErrorResponseBuilder.class
 com/transaction_service/exception/GlobalException.class
 com/transaction_service/controller/TransactionController.class

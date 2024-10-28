@@ -1,6 +1,7 @@
 com/fund_transfer/model/mapper/FundTransferMapper.class
 com/fund_transfer/external/TransactionService.class
 com/fund_transfer/model/dto/request/FundTransferRequest.class
+com/fund_transfer/exception/UnauthorizedAccessException.class
 com/fund_transfer/exception/GlobalException.class
 com/fund_transfer/model/TransferType.class
 com/fund_transfer/exception/ErrorResponse$ErrorResponseBuilder.class
@@ -16,6 +17,7 @@ com/fund_transfer/model/dto/AccountDto$AccountDtoBuilder.class
 com/fund_transfer/FundTransferApplication.class
 com/fund_transfer/exception/GlobalExceptionHandler.class
 com/fund_transfer/model/dto/TransactionDto$TransactionDtoBuilder.class
+com/fund_transfer/utils/JwtUtil.class
 com/fund_transfer/service/implementation/FundTransferServiceImpl.class
 com/fund_transfer/configuration/FeignClientErrorDecoder.class
 com/fund_transfer/model/dto/FundTransferDto$FundTransferDtoBuilder.class

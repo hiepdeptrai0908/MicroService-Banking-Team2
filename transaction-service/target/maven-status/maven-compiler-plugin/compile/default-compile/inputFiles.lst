@@ -9,6 +9,7 @@
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/exception/GlobalExceptionHandler.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/exception/InsufficientBalance.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/exception/ResourceNotFound.java
+/Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/exception/UnauthorizedAccessException.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/external/AccountService.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/model/TransactionStatus.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/model/TransactionType.java
@@ -22,3 +23,4 @@
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/repository/TransactionRepository.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/service/TransactionService.java
 /Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/service/implementation/TransactionServiceImpl.java
+/Users/hiepdeptrai0908/Document/DTN-2402/Microservice/MicroService-Banking-Team2/transaction-service/src/main/java/com/transaction_service/utils/JwtUtil.java
