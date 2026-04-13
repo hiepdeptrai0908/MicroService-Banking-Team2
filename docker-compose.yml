@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   eureka-server:
@@ -40,6 +40,10 @@ services:
     environment:
       SPRING_APPLICATION_NAME: user-service
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
 
   account-service:
     build:
@@ -55,6 +59,11 @@ services:
     environment:
       SPRING_APPLICATION_NAME: account-service
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
 
   fund-transfer-service:
     build:
@@ -70,6 +79,11 @@ services:
     environment:
       SPRING_APPLICATION_NAME: fund-transfer-service
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
 
   transaction-service:
     build:
@@ -85,6 +99,11 @@ services:
     environment:
       SPRING_APPLICATION_NAME: transaction-service
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
 
   sequence-generator:
     build:
@@ -100,6 +119,10 @@ services:
     environment:
       SPRING_APPLICATION_NAME: sequence-generator
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
 
   prometheus:
     image: prom/prometheus

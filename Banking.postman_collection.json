@@ -2,94 +2,45 @@
     "info": {
         "_postman_id": "563c5f7a-1e27-4c14-9dc6-ee51c451723d",
         "name": "Banking",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        "_exporter_id": "19274266"
+        "description": "Banking Microservices API Collection\n\nFlow: Register -> Login -> Create Account -> Deposit -> Activate -> Transfer/Withdraw",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [
-        {
-            "key": "authToken",
-            "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJJZCI6MSwiaWF0IjoxNzI5OTMzNzA2LCJleHAiOjE3Mjk5MzQzMDZ9.5pXsreF6cFQTb8GWzkiL9MyoMWxdtZ9ZOY6U77hzIiDhTd72GVwkrtpy0K6p7qY9UCOGMupbHQybAO_HtkBd2Q",
-            "type": "default"
-        },
-        {
-            "key": "ApiGatewayURL",
-            "value": "http://localhost:8080",
-            "type": "default"
-        }
+        { "key": "authToken", "value": "", "type": "default" },
+        { "key": "ApiGatewayURL", "value": "http://localhost:8080", "type": "default" },
+        { "key": "accountNumber", "value": "0600140000001", "type": "default" },
+        { "key": "referenceId", "value": "", "type": "default" }
     ],
     "item": [
         {
             "name": "user-service",
             "item": [
                 {
-                    "name": "Login (Đăng nhập)",
+                    "name": "1. Register",
                     "request": {
                         "method": "POST",
                         "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // dophuc - 123456\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"123\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/users/login",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "users", "login"]
-                        }
-                    },
-                    "response": []
+                        "body": { "mode": "raw", "raw": "{\n    \"fullName\": \"Test User\",\n    \"username\": \"admin\",\n    \"password\": \"123\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/users/register", "host": ["{{ApiGatewayURL}}"], "path": ["api", "users", "register"] }
+                    }
                 },
                 {
-                    "name": "Register (Đăng ký)",
+                    "name": "2. Login",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.code === 200) {", "    var jsonData = pm.response.json();", "    if (jsonData.token) {", "        pm.collectionVariables.set('authToken', jsonData.token);", "    }", "}"] } }],
                     "request": {
                         "method": "POST",
                         "header": [],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    \"fullName\": \"Triệu Quang Hiệp\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"123\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/users/register",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "users", "register"]
-                        }
-                    },
-                    "response": []
+                        "body": { "mode": "raw", "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/users/login", "host": ["{{ApiGatewayURL}}"], "path": ["api", "users", "login"] }
+                    }
                 },
                 {
-                    "name": "Get All User(Lấy tất cả)",
+                    "name": "3. Get All Users",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/users",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "users"],
-                            "query": [
-                                {
-                                    "key": "",
-                                    "value": null,
-                                    "disabled": true
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/users", "host": ["{{ApiGatewayURL}}"], "path": ["api", "users"] }
+                    }
                 }
             ]
         },
@@ -97,319 +48,63 @@
             "name": "account-service",
             "item": [
                 {
-                    "name": "Create Account (Tạo tài khoản)",
+                    "name": "1. Create Account",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.code === 200 || pm.response.code === 201) {", "    var jsonData = pm.response.json();", "    if (jsonData.accountNumber) {", "        pm.collectionVariables.set('accountNumber', jsonData.accountNumber);", "    }", "}"] } }],
                     "request": {
                         "method": "POST",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // Không cần sử dụng user ID nữa, bản thân api sẽ đọc token để nhận user ID để xử lý\r\n    \"accountType\": \"SAVINGS_ACCOUNT\"\r\n    // Các loại tài khoản ngân hàng (chỉ khác tên gọi, bản chất vẫn giống nhau do xử lý chung logic)\r\n    //SAVINGS_ACCOUNT, FIXED_DEPOSIT, LOAN_ACCOUNT\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts"]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "body": { "mode": "raw", "raw": "{\n    \"accountType\": \"SAVINGS_ACCOUNT\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts"] }
+                    }
                 },
                 {
-                    "name": "Update Account Status (Cập nhật trạng thái tài khoản)",
+                    "name": "2. Read Accounts By User ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts/1", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts", "1"] }
+                    }
+                },
+                {
+                    "name": "3. Read By Account Number",
+                    "request": {
+                        "method": "GET",
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts?accountNumber={{accountNumber}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts"], "query": [{ "key": "accountNumber", "value": "{{accountNumber}}" }] }
+                    }
+                },
+                {
+                    "name": "4. Get Account Balance",
+                    "request": {
+                        "method": "GET",
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts/balance?accountNumber={{accountNumber}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts", "balance"], "query": [{ "key": "accountNumber", "value": "{{accountNumber}}" }] }
+                    }
+                },
+                {
+                    "name": "5. Update Account Status",
                     "request": {
                         "method": "PATCH",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // Các loại trạng thái của tài khoản\r\n    // Lưu ý: Tài khoản khi tạo mặc định là PENDING, và cần ít nhất 1000 tiền trở lên mới có thể đổi trạng thái ACTIVE\r\n    // PENDING, ACTIVE, BLOCKED, CLOSED\r\n    \"accountStatus\": \"ACTIVE\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts?accountNumber=0600140000001",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts"],
-                            "query": [
-                                {
-                                    "key": "accountNumber",
-                                    "value": "0600140000001"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "body": { "mode": "raw", "raw": "{\n    \"accountStatus\": \"ACTIVE\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts?accountNumber={{accountNumber}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts"], "query": [{ "key": "accountNumber", "value": "{{accountNumber}}" }] }
+                    }
                 },
                 {
-                    "name": "Read Accounts By ID (Đọc tất cả tài khoản dựa trên user ID)",
-                    "protocolProfileBehavior": {
-                        "disableBodyPruning": true
-                    },
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // PENDING, ACTIVE, BLOCKED, CLOSED\r\n    \"accountStatus\": \"ACTIVE\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts/2",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts", "2"]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Read By Account Number (Đọc dựa trên số tài khoản) (Đang được gọi)",
-                    "protocolProfileBehavior": {
-                        "disableBodyPruning": true
-                    },
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // PENDING, ACTIVE, BLOCKED, CLOSED\r\n    \"accountStatus\": \"ACTIVE\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts?accountNumber=0600140000001",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts"],
-                            "query": [
-                                {
-                                    "key": "accountNumber",
-                                    "value": "0600140000001"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get Account Balance (Đọc số dư)",
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts/balance?accountNumber=0600140000001",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts", "balance"],
-                            "query": [
-                                {
-                                    "key": "accountNumber",
-                                    "value": "0600140000001"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Update Account (Cập nhật tài khoản)",
+                    "name": "6. Close Account",
                     "request": {
                         "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // Đang được sử dụng bởi Transaction (giao dịch gửi tiền (DEPOSIT), và rút tiền (WITHDRAWN) )\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts?accountNumber=0600140000001",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts"],
-                            "query": [
-                                {
-                                    "key": "accountNumber",
-                                    "value": "0600140000001"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts/closure?accountNumber={{accountNumber}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts", "closure"], "query": [{ "key": "accountNumber", "value": "{{accountNumber}}" }] }
+                    }
                 },
                 {
-                    "name": "Close account(Đóng tài khoản)",
-                    "request": {
-                        "method": "PUT",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    //Yêu cầu số dư bằng 0 để đóng \r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts/closure?accountNumber=0600140000001",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "accounts", "closure"],
-                            "query": [
-                                {
-                                    "key": "accountNumber",
-                                    "value": "0600140000001"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get Transactions From AccountNumber (Lấy tất cả giao dịch dựa trên só tài khoản)",
+                    "name": "7. Get Transactions By Account",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/accounts/0600140000001/transactions",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": [
-                                "api",
-                                "accounts",
-                                "0600140000001",
-                                "transactions"
-                            ]
-                        }
-                    },
-                    "response": []
-                }
-            ]
-        },
-        {
-            "name": "fund-transfer-service",
-            "item": [
-                {
-                    "name": "Fund Transfer (Chuyển tiền)",
-                    "request": {
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n    \"fromAccount\": \"0600140000001\",\n    \"toAccount\": \"0600140000002\",\n    \"amount\": \"5000\"\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/fund-transfers",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "fund-transfers"]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "Get Transfer Detail (Lấy thông tin giao dịch dựa trên tham chiếu)",
-                    "protocolProfileBehavior": {
-                        "disableBodyPruning": true
-                    },
-                    "request": {
-                        "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/fund-transfers/a2c1bf00-838f-49c6-b589-a03df1e71451",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": [
-                                "api",
-                                "fund-transfers",
-                                "a2c1bf00-838f-49c6-b589-a03df1e71451"
-                            ]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/accounts/{{accountNumber}}/transactions", "host": ["{{ApiGatewayURL}}"], "path": ["api", "accounts", "{{accountNumber}}", "transactions"] }
+                    }
                 }
             ]
         },
@@ -417,132 +112,61 @@
             "name": "transaction-service",
             "item": [
                 {
-                    "name": "DEPOSIT (Thêm giao dịch nạp)",
+                    "name": "1. Deposit",
                     "request": {
                         "method": "POST",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // Chỉ dùng cho hoạt động gửi và rút tiền\r\n    \"accountId\": \"0600140000001\",\r\n    \"transactionType\": \"DEPOSIT\",\r\n    \"amount\": 10000,\r\n    \"description\": \"Nạp tiền lần đầu\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/transactions",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "transactions"]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "body": { "mode": "raw", "raw": "{\n    \"accountId\": \"{{accountNumber}}\",\n    \"transactionType\": \"DEPOSIT\",\n    \"amount\": 10000,\n    \"description\": \"Deposit\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/transactions", "host": ["{{ApiGatewayURL}}"], "path": ["api", "transactions"] }
+                    }
                 },
                 {
-                    "name": "WITHDRAWAL (Thêm giao dịch rút)",
+                    "name": "2. Withdrawal",
                     "request": {
                         "method": "POST",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\r\n    // Available for DEPOSIT and WITHDRAWAL (Chỉ dùng cho hoạt động gửi và rút tiền)\r\n    // Yêu cầu tài khoản phải được kích hoạt (chuyển trạng thái tài khoản ACTIVE)\r\n    \"accountId\": \"0600140000001\",\r\n    \"transactionType\": \"WITHDRAWAL\",\r\n    \"amount\": 2000,\r\n    \"description\": \"Rút tiền lần đầu\"\r\n}",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/transactions",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "transactions"]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "body": { "mode": "raw", "raw": "{\n    \"accountId\": \"{{accountNumber}}\",\n    \"transactionType\": \"WITHDRAWAL\",\n    \"amount\": 2000,\n    \"description\": \"Withdrawal\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/transactions", "host": ["{{ApiGatewayURL}}"], "path": ["api", "transactions"] }
+                    }
                 },
                 {
-                    "name": "Get all transactions by account number (Lấy giao dịch trên số tài khoản)",
-                    "protocolProfileBehavior": {
-                        "disableBodyPruning": true
-                    },
+                    "name": "3. Get Transactions By Account",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/transactions?accountId=0600140000001",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": ["api", "transactions"],
-                            "query": [
-                                {
-                                    "key": "accountId",
-                                    "value": "0600140000001"
-                                }
-                            ]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/transactions?accountId={{accountNumber}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "transactions"], "query": [{ "key": "accountId", "value": "{{accountNumber}}" }] }
+                    }
                 },
                 {
-                    "name": "Lấy giao dịch dựa trên tham chiếu",
-                    "protocolProfileBehavior": {
-                        "disableBodyPruning": true
-                    },
+                    "name": "4. Get Transaction By Reference",
                     "request": {
                         "method": "GET",
-                        "header": [
-                            {
-                                "key": "Authorization",
-                                "value": "Bearer {{authToken}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "",
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },
-                        "url": {
-                            "raw": "{{ApiGatewayURL}}/api/transactions/a2c1bf00-838f-49c6-b589-a03df1e71451",
-                            "host": ["{{ApiGatewayURL}}"],
-                            "path": [
-                                "api",
-                                "transactions",
-                                "a2c1bf00-838f-49c6-b589-a03df1e71451"
-                            ]
-                        }
-                    },
-                    "response": []
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/transactions/{{referenceId}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "transactions", "{{referenceId}}"] }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "fund-transfer-service",
+            "item": [
+                {
+                    "name": "1. Fund Transfer",
+                    "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.code === 200 || pm.response.code === 201) {", "    var jsonData = pm.response.json();", "    if (jsonData.transactionReference) {", "        pm.collectionVariables.set('referenceId', jsonData.transactionReference);", "    }", "}"] } }],
+                    "request": {
+                        "method": "POST",
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "body": { "mode": "raw", "raw": "{\n    \"fromAccount\": \"{{accountNumber}}\",\n    \"toAccount\": \"0600140000002\",\n    \"amount\": \"5000\"\n}", "options": { "raw": { "language": "json" } } },
+                        "url": { "raw": "{{ApiGatewayURL}}/api/fund-transfers", "host": ["{{ApiGatewayURL}}"], "path": ["api", "fund-transfers"] }
+                    }
+                },
+                {
+                    "name": "2. Get Transfer Detail",
+                    "request": {
+                        "method": "GET",
+                        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}", "type": "text" }],
+                        "url": { "raw": "{{ApiGatewayURL}}/api/fund-transfers/{{referenceId}}", "host": ["{{ApiGatewayURL}}"], "path": ["api", "fund-transfers", "{{referenceId}}"] }
+                    }
                 }
             ]
         }
